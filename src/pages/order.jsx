@@ -438,7 +438,7 @@ export default function OrderPage(props) {
       </div>
 
       {/* Floating Cart Button */}
-      {totalCount > 0 && <div className="fixed bottom-20 left-4 right-4 z-40">
+      {totalCount > 0 && <div className="fixed bottom-24 left-4 right-4 z-40">
           <button onClick={() => setShowCart(true)} className="w-full bg-[#370617] text-white rounded-2xl px-5 py-4 shadow-2xl flex items-center justify-between hover:bg-[#370617]/90 transition-all active:scale-[0.98]">
             <div className="flex items-center gap-3">
               <div className="relative">
