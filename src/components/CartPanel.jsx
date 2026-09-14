@@ -16,10 +16,10 @@ export function CartPanel({
   if (!show) return null;
   return <>
       {/* Overlay */}
-      <div className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm transition-opacity" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/50 z-[60] backdrop-blur-sm transition-opacity" onClick={onClose} />
 
       {/* Cart Panel */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up">
+      <div className="fixed bottom-0 left-0 right-0 z-[60] animate-slide-up">
         <div className="bg-white rounded-t-3xl max-h-[70vh] flex flex-col shadow-2xl">
           {/* Header */}
           <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-[#370617]/5">
