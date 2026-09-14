@@ -1,0 +1,9 @@
+{
+  "main": "order",
+  "items": [
+    {
+      "pageId": "checkout",
+      "path": "/checkout"
+    }
+  ]
+}
