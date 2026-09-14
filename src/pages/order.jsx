@@ -2,8 +2,6 @@
 import React, { useState, useMemo } from 'react';
 // @ts-ignore;
 import { ShoppingCart, Plus, Minus, X, Search, ChefHat, Clock, Star } from 'lucide-react';
-// @ts-ignore;
-import { useToast } from '@/components/ui';
 
 import { CategoryBar } from '@/components/CategoryBar';
 import { MenuItem } from '@/components/MenuItem';
@@ -70,8 +68,8 @@ const MENU_DATA = [{
     image: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500&h=400&fit=crop',
     desc: '新鲜番茄熬制汤底',
     specs: [{
-      label: '辣度',
-      options: ['不辣', '微辣']
+      label: '份量',
+      options: ['标准份', '大份 +¥5']
     }]
   }, {
     id: 'm5',
@@ -93,7 +91,10 @@ const MENU_DATA = [{
     sales: 198,
     image: 'https://images.unsplash.com/photo-1552611052-33e04de3b540?w=500&h=400&fit=crop',
     desc: '上海经典葱油拌面',
-    specs: []
+    specs: [{
+      label: '份量',
+      options: ['标准份', '大份 +¥4']
+    }]
   }, {
     id: 'm7',
     name: '麻辣肥牛米线',
@@ -105,6 +106,9 @@ const MENU_DATA = [{
     specs: [{
       label: '辣度',
       options: ['中辣', '特辣']
+    }, {
+      label: '份量',
+      options: ['标准份', '加量 +¥5']
     }]
   }]
 }, {
@@ -132,8 +136,8 @@ const MENU_DATA = [{
     image: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500&h=400&fit=crop',
     desc: '嫩滑牛柳配黑椒汁',
     specs: [{
-      label: '份量',
-      options: ['标准份', '大份 +¥5']
+      label: '辣度',
+      options: ['微辣', '中辣', '特辣']
     }]
   }, {
     id: 'm10',
@@ -160,7 +164,10 @@ const MENU_DATA = [{
     sales: 312,
     image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&h=400&fit=crop',
     desc: '底部焦脆，鲜嫩多汁',
-    specs: []
+    specs: [{
+      label: '份量',
+      options: ['6个', '12个 +¥12']
+    }]
   }, {
     id: 'm12',
     name: '杨枝甘露',
@@ -169,7 +176,10 @@ const MENU_DATA = [{
     sales: 267,
     image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=500&h=400&fit=crop',
     desc: '新鲜芒果配西柚粒',
-    specs: []
+    specs: [{
+      label: '温度',
+      options: ['冰镇', '常温']
+    }]
   }, {
     id: 'm13',
     name: '芒果糯米饭',
@@ -178,7 +188,10 @@ const MENU_DATA = [{
     sales: 143,
     image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=500&h=400&fit=crop',
     desc: '泰国香糯配新鲜芒果',
-    specs: []
+    specs: [{
+      label: '温度',
+      options: ['冰镇', '常温']
+    }]
   }, {
     id: 'm14',
     name: '炸春卷',
@@ -187,7 +200,10 @@ const MENU_DATA = [{
     sales: 198,
     image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&h=400&fit=crop',
     desc: '金黄酥脆，馅料丰富',
-    specs: []
+    specs: [{
+      label: '份量',
+      options: ['小份', '大份 +¥4']
+    }]
   }]
 }, {
   id: 'cat5',
@@ -215,7 +231,10 @@ const MENU_DATA = [{
     desc: '正宗港式丝袜奶茶',
     specs: [{
       label: '温度',
-      options: ['热饮', '少冰', '去冰']
+      options: ['热饮', '冰饮']
+    }, {
+      label: '糖度',
+      options: ['全糖', '半糖', '无糖']
     }]
   }, {
     id: 'm17',
@@ -227,27 +246,26 @@ const MENU_DATA = [{
     desc: '清新爽口，解腻必备',
     specs: [{
       label: '温度',
-      options: ['冰镇', '常温', '温饮']
+      options: ['冰镇', '常温']
+    }, {
+      label: '糖度',
+      options: ['正常糖', '少糖', '无糖']
     }]
   }]
 }];
 export default function OrderPage(props) {
-  const {
-    toast
-  } = useToast();
   const [activeCategory, setActiveCategory] = useState(MENU_DATA[0].id);
   const [cart, setCart] = useState({});
   const [showCart, setShowCart] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [specModalItem, setSpecModalItem] = useState(null);
+  const [specItem, setSpecItem] = useState(null);
   const cartArray = useMemo(() => {
     return Object.entries(cart).map(([key, item]) => ({
-      menuId: key,
+      menuId: item.menuId,
       name: item.name,
       price: item.price,
       quantity: item.quantity,
-      image: item.image,
-      specs: item.specs
+      image: item.image
     }));
   }, [cart]);
   const totalCount = useMemo(() => {
@@ -263,24 +281,25 @@ export default function OrderPage(props) {
     const q = searchQuery.toLowerCase();
     return activeCategoryData.items.filter(item => item.name.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q));
   }, [activeCategoryData, searchQuery]);
-  const buildKey = (item, specs) => {
-    const specStr = specs && Object.keys(specs).length > 0 ? '|' + Object.entries(specs).map(([k, v]) => k + ':' + v).join(',') : '';
-    return item.id + specStr;
-  };
-  const calcPrice = (item, specs) => {
-    let extra = 0;
-    if (specs) {
-      Object.values(specs).forEach(v => {
-        const m = String(v).match(/\+¥(\d+)/);
-        if (m) extra += parseInt(m[1], 10);
-      });
-    }
-    return item.price + extra;
-  };
   const addToCart = (item, specs, qty = 1) => {
+    // 兼容 CartPanel 传入的 originalItem（含 specs 对象）
+    let resolvedSpecs = specs;
+    if (!specs && item.specs && typeof item.specs === 'object') {
+      resolvedSpecs = item.specs;
+    }
     setCart(prev => {
-      const key = buildKey(item, specs);
-      const unitPrice = calcPrice(item, specs);
+      // 用 菜品id + 规格组合 作为唯一 key，不同规格视为不同条目
+      const specKey = resolvedSpecs ? Object.values(resolvedSpecs).join('/') : '';
+      const key = specKey ? `${item.id}__${specKey}` : item.id;
+      // 计算规格加价
+      let extra = 0;
+      if (resolvedSpecs) {
+        Object.values(resolvedSpecs).forEach(opt => {
+          const m = String(opt).match(/\+¥(\d+(\.\d+)?)/);
+          if (m) extra += parseFloat(m[1]);
+        });
+      }
+      const unitPrice = item.price + extra;
       if (prev[key]) {
         return {
           ...prev,
@@ -298,26 +317,44 @@ export default function OrderPage(props) {
           price: unitPrice,
           quantity: qty,
           image: item.image,
-          specs: specs || {}
+          specs: specKey || ''
         }
       };
     });
   };
-  const removeFromCart = itemId => {
+  // 点击 + 号：有规格则弹窗，无规格直接加购
+  const handleAddClick = item => {
+    if (item.specs && item.specs.length > 0) {
+      setSpecItem(item);
+    } else {
+      addToCart(item);
+    }
+  };
+  const handleSpecConfirm = ({
+    item,
+    specs,
+    quantity
+  }) => {
+    addToCart(item, specs, quantity);
+    setSpecItem(null);
+  };
+  const removeFromCart = (menuId, specs) => {
     setCart(prev => {
-      if (!prev[itemId]) return prev;
-      if (prev[itemId].quantity <= 1) {
+      const specKey = specs || '';
+      const key = specKey ? `${menuId}__${specKey}` : menuId;
+      if (!prev[key]) return prev;
+      if (prev[key].quantity <= 1) {
         const {
-          [itemId]: _,
+          [key]: _,
           ...rest
         } = prev;
         return rest;
       }
       return {
         ...prev,
-        [itemId]: {
-          ...prev[itemId],
-          quantity: prev[itemId].quantity - 1
+        [key]: {
+          ...prev[key],
+          quantity: prev[key].quantity - 1
         }
       };
     });
@@ -327,30 +364,7 @@ export default function OrderPage(props) {
     setShowCart(false);
   };
   const getItemQuantity = itemId => {
-    return Object.entries(cart).filter(([k]) => k.startsWith(itemId + '|')).reduce((sum, [, v]) => sum + v.quantity, 0);
-  };
-  const handleAddWithSpec = item => {
-    if (!item.specs || item.specs.length === 0) {
-      addToCart(item, {}, 1);
-      toast({
-        title: '已加入购物车',
-        description: item.name,
-        variant: 'default'
-      });
-      return;
-    }
-    setSpecModalItem(item);
-  };
-  const handleSpecConfirm = (specs, quantity) => {
-    if (!specModalItem) return;
-    addToCart(specModalItem, specs, quantity);
-    const specText = Object.values(specs).join(' / ');
-    toast({
-      title: '已加入购物车',
-      description: specModalItem.name + (specText ? ' · ' + specText : ''),
-      variant: 'default'
-    });
-    setSpecModalItem(null);
+    return cart[itemId]?.quantity || 0;
   };
   const handleDetail = itemId => {
     props.$w?.utils?.navigateTo?.({
@@ -418,10 +432,7 @@ export default function OrderPage(props) {
                 清空搜索
               </button>
             </div> : <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              {activeCategoryData && filteredItems.map((item, index) => {
-            const firstKey = Object.keys(cart).find(k => k.startsWith(item.id + '|')) || item.id;
-            return <MenuItem key={item.id} item={item} quantity={getItemQuantity(item.id)} onAddWithSpec={() => handleAddWithSpec(item)} onRemove={() => removeFromCart(firstKey)} onDetail={() => handleDetail(item.id)} index={index} />;
-          })}
+              {activeCategoryData && filteredItems.map((item, index) => <MenuItem key={item.id} item={item} quantity={getItemQuantity(item.id)} onAddClick={handleAddClick} onRemove={() => removeFromCart(item.id)} onDetail={() => handleDetail(item.id)} index={index} />)}
             </div>}
         </main>
       </div>
@@ -447,8 +458,8 @@ export default function OrderPage(props) {
       {/* Cart Panel */}
       <CartPanel show={showCart} onClose={() => setShowCart(false)} items={cartArray} totalPrice={totalPrice} onAdd={addToCart} onRemove={removeFromCart} onClear={clearCart} onCheckout={handleCheckout} $w={props.$w} />
 
-      {/* Spec Modal */}
-      <SpecModal item={specModalItem} onClose={() => setSpecModalItem(null)} onConfirm={handleSpecConfirm} />
+      {/* Spec Selection Modal */}
+      <SpecModal show={!!specItem} item={specItem} onClose={() => setSpecItem(null)} onConfirm={handleSpecConfirm} />
 
       {/* Bottom TabBar */}
       <TabBar active="order" $w={props.$w} />

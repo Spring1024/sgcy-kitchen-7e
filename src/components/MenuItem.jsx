@@ -22,7 +22,7 @@ export function MenuItem({
   onAdd,
   onRemove,
   onDetail,
-  onAddWithSpec,
+  onAddClick,
   index
 }) {
   return <div className="group bg-white rounded-2xl overflow-hidden border border-[#370617]/5 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5" style={{
@@ -63,7 +63,7 @@ export function MenuItem({
             <span className="font-['Playfair_Display'] text-lg font-bold text-[#E85D04]">{item.price}</span>
           </div>
 
-          {quantity === 0 ? <button onClick={onAddWithSpec} className="w-8 h-8 rounded-full bg-[#E85D04] text-white flex items-center justify-center hover:bg-[#E85D04]/90 active:scale-90 transition-all shadow-md shadow-[#E85D04]/20">
+          {quantity === 0 ? <button onClick={() => onAddClick(item)} className="w-8 h-8 rounded-full bg-[#E85D04] text-white flex items-center justify-center hover:bg-[#E85D04]/90 active:scale-90 transition-all shadow-md shadow-[#E85D04]/20">
               <Plus className="w-4 h-4" />
             </button> : <div className="flex items-center gap-2 bg-[#FFF8F0] rounded-full px-1.5 py-1">
               <button onClick={onRemove} className="w-6 h-6 rounded-full bg-white border border-[#E85D04]/20 text-[#E85D04] flex items-center justify-center hover:bg-[#E85D04] hover:text-white active:scale-90 transition-all">
@@ -72,7 +72,7 @@ export function MenuItem({
               <span className="text-sm font-bold text-[#370617] min-w-[1.2rem] text-center">
                 {quantity}
               </span>
-              <button onClick={onAddWithSpec} className="w-6 h-6 rounded-full bg-[#E85D04] text-white flex items-center justify-center hover:bg-[#E85D04]/90 active:scale-90 transition-all">
+              <button onClick={() => onAddClick(item)} className="w-6 h-6 rounded-full bg-[#E85D04] text-white flex items-center justify-center hover:bg-[#E85D04]/90 active:scale-90 transition-all">
                 <Plus className="w-3 h-3" />
               </button>
             </div>

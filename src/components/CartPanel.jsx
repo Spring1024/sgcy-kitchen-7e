@@ -53,32 +53,40 @@ export function CartPanel({
                 </div>
                 <p className="text-sm text-[#370617]/40">购物车还是空的</p>
                 <p className="text-xs text-[#370617]/30 mt-1">快去挑选美食吧</p>
-              </div> : items.map(item => <div key={item.menuId} className="flex items-center gap-3 bg-[#FFF8F0] rounded-xl p-3">
+              </div> : items.map(item => <div key={item.menuId + (item.specs || '')} className="flex items-center gap-3 bg-[#FFF8F0] rounded-xl p-3">
                   <img src={item.image} alt={item.name} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <h4 className="text-sm font-bold text-[#370617] truncate">
                       {item.name}
                     </h4>
-                    {item.specs && Object.keys(item.specs).length > 0 && <p className="text-[11px] text-[#370617]/50 mt-0.5 truncate">
-                        {Object.values(item.specs).join(' / ')}
-                      </p>}
+                    {item.specs ? <p className="text-[11px] text-[#370617]/50 mt-0.5 truncate">
+                        {item.specs}
+                      </p> : null}
                     <p className="text-[#E85D04] font-bold mt-1">
                       ¥<span className="text-base">{item.price}</span>
                     </p>
                   </div>
                   <div className="flex items-center gap-2 bg-white rounded-full px-1.5 py-1 shadow-sm">
-                    <button onClick={() => onRemove(item.menuId)} className="w-6 h-6 rounded-full border border-[#E85D04]/20 text-[#E85D04] flex items-center justify-center hover:bg-[#E85D04] hover:text-white active:scale-90 transition-all">
+                    <button onClick={() => onRemove(item.menuId, item.specs)} className="w-6 h-6 rounded-full border border-[#E85D04]/20 text-[#E85D04] flex items-center justify-center hover:bg-[#E85D04] hover:text-white active:scale-90 transition-all">
                       <Minus className="w-3 h-3" />
                     </button>
                     <span className="text-sm font-bold text-[#370617] min-w-[1.2rem] text-center">
                       {item.quantity}
                     </span>
-                    <button onClick={() => onAdd({
-                id: item.menuId,
-                name: item.name,
-                price: item.price,
-                image: item.image
-              }, item.specs, 1)} className="w-6 h-6 rounded-full bg-[#E85D04] text-white flex items-center justify-center hover:bg-[#E85D04]/90 active:scale-90 transition-all">
+                    <button onClick={() => {
+                const originalItem = {
+                  id: item.menuId,
+                  name: item.name,
+                  price: item.price,
+                  image: item.image,
+                  specs: item.specs ? item.specs.split('/').reduce((acc, val, i) => {
+                    const labels = ['份量', '辣度', '温度', '糖度'];
+                    acc[labels[i] || `规格${i + 1}`] = val;
+                    return acc;
+                  }, {}) : null
+                };
+                onAdd(originalItem);
+              }} className="w-6 h-6 rounded-full bg-[#E85D04] text-white flex items-center justify-center hover:bg-[#E85D04]/90 active:scale-90 transition-all">
                       <Plus className="w-3 h-3" />
                     </button>
                   </div>
