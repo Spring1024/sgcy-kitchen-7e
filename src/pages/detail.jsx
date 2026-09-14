@@ -5,8 +5,6 @@ import { ArrowLeft, Plus, Minus, Star, Clock, Fire, ShoppingCart, Check } from '
 // @ts-ignore;
 import { useToast } from '@/components/ui';
 
-import { TabBar } from '@/components/TabBar';
-
 // 菜品数据（实际项目中应从数据源获取，这里用 params.id 匹配）
 const ALL_DISHES = [{
   id: 'm1',
@@ -252,8 +250,5 @@ export default function DetailPage(props) {
           </button>
         </div>
       </div>
-
-      {/* Bottom TabBar */}
-      <TabBar active="order" $w={props.$w} />
     </div>;
 }

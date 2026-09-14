@@ -5,8 +5,6 @@ import { ArrowLeft, Store, CreditCard, Wallet, Clock, Check, ChevronRight, Shopp
 // @ts-ignore;
 import { useToast } from '@/components/ui';
 
-import { TabBar } from '@/components/TabBar';
-
 // 模拟购物车数据（实际项目中应从全局状态或数据源获取）
 const MOCK_CART = [{
   id: 'm1',
@@ -268,8 +266,5 @@ export default function CheckoutPage(props) {
           </button>
         </div>
       </div>
-
-      {/* Bottom TabBar */}
-      <TabBar active="order" $w={props.$w} />
     </div>;
 }

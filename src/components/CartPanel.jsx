@@ -59,6 +59,9 @@ export function CartPanel({
                     <h4 className="text-sm font-bold text-[#370617] truncate">
                       {item.name}
                     </h4>
+                    {item.specs && Object.keys(item.specs).length > 0 && <p className="text-[11px] text-[#370617]/50 mt-0.5 truncate">
+                        {Object.values(item.specs).join(' / ')}
+                      </p>}
                     <p className="text-[#E85D04] font-bold mt-1">
                       ¥<span className="text-base">{item.price}</span>
                     </p>
@@ -70,15 +73,12 @@ export function CartPanel({
                     <span className="text-sm font-bold text-[#370617] min-w-[1.2rem] text-center">
                       {item.quantity}
                     </span>
-                    <button onClick={() => {
-                const originalItem = {
-                  id: item.menuId,
-                  name: item.name,
-                  price: item.price,
-                  image: item.image
-                };
-                onAdd(originalItem);
-              }} className="w-6 h-6 rounded-full bg-[#E85D04] text-white flex items-center justify-center hover:bg-[#E85D04]/90 active:scale-90 transition-all">
+                    <button onClick={() => onAdd({
+                id: item.menuId,
+                name: item.name,
+                price: item.price,
+                image: item.image
+              }, item.specs, 1)} className="w-6 h-6 rounded-full bg-[#E85D04] text-white flex items-center justify-center hover:bg-[#E85D04]/90 active:scale-90 transition-all">
                       <Plus className="w-3 h-3" />
                     </button>
                   </div>
