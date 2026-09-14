@@ -62,7 +62,6 @@ export function MenuItem({
             <span className="text-[10px] font-bold text-[#E85D04]">¥</span>
             <span className="font-['Playfair_Display'] text-lg font-bold text-[#E85D04]">{item.price}</span>
           </div>
-
           {quantity === 0 ? <button onClick={() => onAddClick(item)} className="w-8 h-8 rounded-full bg-[#E85D04] text-white flex items-center justify-center hover:bg-[#E85D04]/90 active:scale-90 transition-all shadow-md shadow-[#E85D04]/20">
               <Plus className="w-4 h-4" />
             </button> : <div className="flex items-center gap-2 bg-[#FFF8F0] rounded-full px-1.5 py-1">
@@ -75,7 +74,7 @@ export function MenuItem({
               <button onClick={() => onAddClick(item)} className="w-6 h-6 rounded-full bg-[#E85D04] text-white flex items-center justify-center hover:bg-[#E85D04]/90 active:scale-90 transition-all">
                 <Plus className="w-3 h-3" />
               </button>
-            </div>
+            </div>}
         </div>
       </div>
     </div>;
